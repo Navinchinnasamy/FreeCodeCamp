@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Quotes</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" crossorigin="anonymous">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" type="text/javascript"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+		<style>
+			body {
+				margin-top: 125px;
+				overflow: hidden;
+			}
+
+			.navbar-fixed-top .nav {
+				padding: 15px 0;
+			}
+
+			@media (max-width: 767px) { 
+				.navbar-brand {
+					padding: 0;        
+				}
+
+				.navbar-brand img {
+					margin-top: 5px;
+					margin-left: 5px;
+				}
+			}
+
+			/* >>>> CUSTOM STYLES <<<< */
+			html, body, .container-table {
+				height: 100%;
+			}
+			.container-table {
+				display: table;
+			}
+			.vertical-center-row {
+				display: table-cell;
+				vertical-align: middle;
+			}
+
+			.btn:visited {
+				color: #337ab7;
+			}
+
+			.btn:hover {
+				color: #fff;
+			}
+		</style>
+		<script>
+			$(function(){
+				var r=0, g=0, b=0, a=0, q='#fff';
+				r = getRandomInt(0, 200);
+				g = getRandomInt(0, 200);
+				b = getRandomInt(0, 200);
+				a = (Math.random() * (1-0.25+1)) + 0.25;
+				var color = r+", "+g+", "+b+", "+a;
+				$("body").css({"background-color":"rgba("+color+")", "color": q});		
+				getRandomQuote();
+			});
+				
+			$("body").on("click", ".quote", function(){
+				getRandomQuote();
+			});
+			
+			function getRandomInt(min, max) {
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			}
+			
+			function getRandomQuote() {
+			  $.ajax({
+				headers: {
+				  "X-Mashape-Key": "9vyp8nIZkGmsh5BwxP5bZkSwJR6Lp1Tkd8njsnZckXlXyd0ihi",
+				  Accept: "application/json",
+				  "Content-Type": "application/x-www-form-urlencoded"
+				},
+				url: 'https://andruxnet-random-famous-quotes.p.mashape.com/cat=',
+				success: function(response) {
+				  var r = JSON.parse(response);
+				  console.log(r);
+				  $("blockquote p").html(r.quote);
+				  $("blockquote footer").html(r.author);
+				  $(".tweet").attr('href', 'https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=' + encodeURIComponent('"' + r.quote + '" ' + r.author));
+				}
+			  });
+			}
+		</script>
+	</head>
+	<body>
+		<div class="container-table" style="width: 100%;">
+			<div class="row" style="width: 100%;">
+				<div class="col-sm-6 col-sm-offset-3">
+					<div class="vertical-center-row" style="width: 100%;">
+						<blockquote style="width: 100%; font-size: 30px;">
+							<p>Look at the sky. We are not alone. The whole universe is friendly to us and conspires only to give the best to those who dream and work.</p>
+							<footer>Dr. A. P. J. Abdul Kalam</footer>
+						</blockquote>
+						<div>
+							<a href="javascript:;" target="_blank" class="btn col-xs-3 tweet" role="button" ><i class="fa fa-twitter fa-stack-1x" style="font-size: 30px;"></i></a>
+							<a href="javascript:;" class="btn col-xs-3 quote" role="button" ><i class="fa fa-refresh fa-stack-1x" style="font-size: 30px;"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
