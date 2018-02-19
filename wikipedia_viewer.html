@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Wikipedia Viewer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+	body {
+		font-family: cursive;
+	}
+	#search {
+		padding: 5px;
+		border: 1px solid gray;
+		border-radius: 15px;
+	}
+	.col-md-3 {
+		padding-left:5px;
+		padding-right: 5px;
+	}
+	.article {
+		border: 1px solid #dfdfdf;
+		border-radius: 5px;
+		padding: 10px;
+		margin-left: 5px;
+		margin-top: 5px;
+	}
+	.article h3 {
+		margin: auto;
+	}
+	
+	.row {
+	  display: flex;
+	  flex-wrap: wrap;
+	}
+	.row > [class*='col-'] {
+	  display: flex;
+	  flex-direction: column;
+	}
+  </style>
+  <script>
+	$(function(){
+		$('#search').keypress(function (e) {
+		 var key = e.which;
+		 if(key == 13)  // the enter key code
+		  {
+			$('#findWiki').trigger("click");
+			return false;  
+		  }
+		});
+		
+		$("body").on("click", "#findWiki", function(){
+			getData($("#search").val());
+		});
+	});
+	
+	
+	function getData(term){
+	  var url_load='https://en.wikipedia.org/w/api.php?callback=?&action=opensearch&search='+term+'&limit=10&namespace=0&format=json';
+	  var html_data="";
+	  $.ajax({
+		type:'GET',
+		url:url_load,
+		async: false,
+		dataType: 'json',
+		success: function (data) {
+			var searchedArticles = '';
+			var titles = data[1], contents = data[2], links = data[3];
+			$.each(titles, function(i, d){
+				searchedArticles += makeCardView(d, contents[i], links[i]);
+			});
+			$("#searched-articles").html(searchedArticles).show();
+		}
+	  });
+
+	}
+	
+	function makeCardView(title, content, link){
+		var cardView = '';
+		cardView += '<div class="col-md-3">'+
+					  '<div class="article">'+
+					    '<h3>'+title+'</h3>'+
+					    '<p class="card-text">'+content+'</p>'+
+					    '<a href="'+link+'" class="card-link" target="_blank">Read More..</a>'+
+					  '</div>'+
+					'</div>';
+		return cardView;
+	}
+  </script>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+  <h1>Wikipedia Viewer</h1>
+  <p>Read a random article by clicking <i><a href="https://en.wikipedia.org/wiki/Special:Random" target="_blank" id="get-random">here</a></i>!</p>
+  <div class="search-container">
+    <form>
+      <input type="text" placeholder="Search wikipedia.." id="search" name="search">
+      <button type="button" class="btn btn-sm btn-info hide" id="findWiki"> Get Articles <i class="fa fa-search"></i></button>
+    </form>
+  </div>
+</div>
+  
+<div class="container">
+  <div class="row" id="searched-articles" style="display: none;">
+    <div class="col-sm-4">
+      <h3>Column 1</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+    <div class="col-sm-4">
+      <h3>Column 2</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+    <div class="col-sm-4">
+      <h3>Column 3</h3>        
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
