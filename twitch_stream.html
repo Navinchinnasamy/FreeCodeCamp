@@ -8,41 +8,153 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <style>
+  <style>	
 	body {
 		font-family: cursive;
+	}
+	.jumbotron {
+		background-image: url('https://nerdordie.com/wp-content/uploads/2015/03/MainDesignImage-AnimatedBackground.jpg');
+	}
+	#title {
+		color: oldlace;
+		font-weight: bold;
+		font-size: 30pt;
+	}
+	.row {
+		padding-left: 10%;
+	}
+	.offline {
+		background-color: cornsilk;
+	}
+	.online {
+		background-color: azure;
+	}
+	.closed {
+		background-color: darkgray;
+	}
+	.channel {
+		margin: 5px;
+		border: 1px solid coral;
+		border-radius: 5px;
+		padding: 0px;
+	}
+	img {
+		width: 100%;
+		border-radius: 5%;
+	}
+	.channel-logo {
+		float: left;
+		width: 20%;
+	}
+	.channel-info {
+		margin-left: 12%;
+	}
+	.channel-name, .channel-status, .channel-desc {
+		display: block;
+		margin-left: 11%;
+	}
+	.channel-name {
+		font-size: 12pt;
+	}
+	.channel-status {
+		font-size: 10pt;
+	}
+	.channel-desc {
+		font-size: 9pt;
+	}
+	
+	
+	/** Menu **/
+	.menu {
+	  position: absolute;
+	  right: 8%;
+	  top: 5%;
+	  color: #5c5457;
+	  font-family: 'Oswald', sans-serif;
+	  font-size: 0.8em;
+	  font-weight: bold;
+	  text-transform: uppercase;
+	}
+	.menu > #online > .circle{
+	{
+		background-color: #b8cca6;
+	}
+	.menu > #offline > .circle {
+		background-color: #8ea7c2;
+	}
+	.menu > .active, .selector:hover {
+		width: 65px !important;
+		transition: width 0.4s linear;
+		cursor: pointer;
+	}
+	
+	.selector {
+		line-height: 20px;
+		height: 20px;
+		background-color: #e1e1e6;
+		padding: 0px 5px;
+		margin: 2px 0px;
+		width: 20px;
+		overflow: hidden;
+		float: right;
+		clear: right;
+		transition: width 0.4s linear;
+	}
+	.selector > .circle {
+	  height: 10px;
+	  width: 10px;
+	  border-radius: 50%;
+	  background-color: #5c5457;
+	  border: 1px solid #5c5457;
+	  float: left;
+	  margin: 5px 5px 5px 0px;
+	}
+	.selector > p {
+	  float: right;
+	  margin: 0px;
 	}
   </style>
   <script>
 	var channels = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"];
 	var result = [];
 	$(function(){
-		getChannels();
+		getStreams('all');
+		$("body .container .row").html('');
 	});
 	
-	function getStreams(){
-		var url = 'https://wind-bow.glitch.me/twitch-api/streams/'+channel;
-		$.getJSON(url, function(data) {
-		  result[i] = listStreams(data);
-		});
-		getChannels();
-	}
-	
-	function getChannels(){
+	function getStreams(filter){
 		$.each(channels, function(i, channel){
-			var url = 'https://wind-bow.glitch.me/twitch-api/channels/'+channel;
-			$.getJSON(url, function(data) {
-			  var temp = listChannels(data, channel);
-			  $.extend( true, result[i], temp );
+			var streamurl = 'https://wind-bow.glitch.me/twitch-api/streams/'+channel;
+			$.getJSON(streamurl, function(data) {
+				result[i] = listStreams(data);
+				var channelurl = 'https://wind-bow.glitch.me/twitch-api/channels/'+channel;
+				$.getJSON(channelurl, function(data) {
+				  var temp = listChannels(data, channel);
+				  $.extend( true, result[i], temp );
+				  createChannelList(result[i]);
+				});
 			});
+			
 		});
 	}
-	
+		
 	function listStreams(data){
-		return {
-			'status': data.stream ? 'Online' : 'Offline',
-			'game': data.stream.game ? data.stream.game : 'Offline'
+		if (data.stream === null) {
+			game = "Offline";
+			status = "offline";
+		} else if (data.stream === undefined) {
+			game = "Account Closed";
+			status = "closed";
+		} else {
+			game = data.stream.game;
+			status = "online";
 		};
+		
+		var info = {
+			'status': status,
+			'game': game
+		};
+		return info;
 	}
 	
 	function listChannels(data, channel){
@@ -57,82 +169,50 @@
 		};
 	}
 	
-	var channels = ["freecodecamp","test_channel","ESL_SC2"];
-
-function getChannelInfo() {
-  channels.forEach(function(channel) {
-    function makeURL(type, name) {
-      return 'https://wind-bow.gomix.me/twitch-api/' + type + '/' + name + '?callback=?';
-    };
-    $.getJSON(makeURL("streams", channel), function(data) {
-      var game,
-          status;
-      if (data.stream === null) {
-        game = "Offline";
-        status = "offline";
-      } else if (data.stream === undefined) {
-        game = "Account Closed";
-        status = "offline";
-      } else {
-        game = data.stream.game;
-        status = "online";
-      };
-      $.getJSON(makeURL("channels", channel), function(data) {
-        var logo = data.logo != null ? data.logo : "https://dummyimage.com/50x50/ecf0e7/5c5457.jpg&text=0x3F",
-          name = data.display_name != null ? data.display_name : channel,
-          description = status === "online" ? ': ' + data.status : "";
-          html = '<div class="row ' + 
-          status + '"><div class="col-xs-2 col-sm-1" id="icon"><img src="' + 
-          logo + '" class="logo"></div><div class="col-xs-10 col-sm-3" id="name"><a href="' + 
-          data.url + '" target="_blank">' + 
-          name + '</a></div><div class="col-xs-10 col-sm-8" id="streaming">'+ 
-          game + '<span class="hidden-xs">' + 
-          description + '</span></div></div>';
-        status === "online" ? $("#display").prepend(html) : $("#display").append(html);
-      });
-    });
-  });
-};
-
-$(document).ready(function() {
-  getChannelInfo();
-  $(".selector").click(function() {
-    $(".selector").removeClass("active");
-    $(this).addClass("active");
-    var status = $(this).attr('id');
-    if (status === "all") {
-      $(".online, .offline").removeClass("hidden");
-    } else if (status === "online") {
-      $(".online").removeClass("hidden");
-      $(".offline").addClass("hidden");
-    } else {
-      $(".offline").removeClass("hidden");
-      $(".online").addClass("hidden");
-    }
-  })
-});
+	function createChannelList(channel){
+		var channelHtml = '';
+		console.log(channel);
+		channelHtml += '<div class="col-xl-3 col-sm-5 col-12 channel '+channel.status+'">'+
+						  '<div class="channel-content">'+
+							'<div class="channel-logo"><img src="'+channel.logo+'" /></div>'+
+							'<div class="channel-info">'+
+								'<label class="channel-name">'+channel.name+'</label>'+
+								'<label class="channel-status">'+channel.game+'</label>'+
+								'<span class="channel-desc">'+channel.desc+'</span>'+
+							'</div>'+
+						  '</div>'+
+						'</div>';
+		$("body .container .row").append(channelHtml);
+		//return channelHtml;
+	}
   </script>
 </head>
 <body>
   
 <div class="container">
-  <div class="row">
-    <div class="col-sm-4">
-      <h3>Column 1</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-    </div>
-    <div class="col-sm-4">
-      <h3>Column 2</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-    </div>
-    <div class="col-sm-4">
-      <h3>Column 3</h3>        
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-    </div>
-  </div>
+	<div class="jumbotron text-center">
+	  <h2 id="title">Twitch Streamer</h2>
+	  <div class="menu">
+		<div class="selector active" id="all">
+			<div class="circle"></div><p>All</p>
+		</div>
+		<div class="selector" id="online">
+			<div class="circle"></div><p>Online</p>
+		</div>
+		<div class="selector" id="offline">
+			<div class="circle"></div><p>Offline</p>
+		</div>
+	  </div>
+	</div>
+	<div class="row">
+		<div class="col-xl-3 col-md-6 col-12 channel">
+			<div class="channel-logo"><img src="https://dummyimage.com/50x50/ecf0e7/5c5457.jpg&text=0x3F" /></div>
+			<div class="channel-info">
+				<label class="channel-name">Channel Name</label>
+				<label class="channel-status">Offline</label>
+			</div>
+		</div>
+	</div>
 </div>
 
 </body>
