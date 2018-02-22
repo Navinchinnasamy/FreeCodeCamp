@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Twitch Streaming</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+<script>
+$(function(){
+
+function getAmountInDollar(c){
+  var inDollar = 0, cash = [];
+  
+  switch(c[0]){
+	case "PENNY":
+	  inDollar = ((1/100) * c[1]);
+	  cash["P"] = inDollar;
+	  break;
+	case "NICKEL":
+	  inDollar = ((5/100) * c[1]);
+	  cash["N"] = inDollar;
+	  break;
+	case "DIME":
+	  inDollar = ((10/100) * c[1]);
+	  cash["D"] = inDollar;
+	  break;
+	case "QUARTER":
+	  inDollar = ((25/100) * c[1]);
+	  cash["Q"] = inDollar;
+	  break;
+	case "ONE":
+	  inDollar = (1 * c[1]);
+	  cash["O"] = inDollar;
+	  break;
+	case "FIVE":
+	  inDollar = (5 * c[1]);
+	  cash["F"] = inDollar;
+	  break;
+	case "TEN":
+	  inDollar = (10 * c[1]);
+	  cash["T"] = inDollar;
+	  break;
+	case "TWENTY":
+	  inDollar = (20 * c[1]);
+	  cash["TT"] = inDollar;
+	  break;
+	case "ONE HUNDRED":
+	  inDollar = (100 * c[1]);
+	  cash["H"] = inDollar;
+	  break;
+  }
+  var ret["doller"] = inDollar;
+  var ret["cash"] = cash;
+  return ret;
+}
+
+function getChange(change, cid){
+  var retChange = [];
+  switch(change){
+    case (change >= 100):
+	  retChange["ONE HUNDRED"] = 
+	  break;
+  }
+}
+
+function checkCashRegister(price, cash, cid) {
+  var change = cash-price;
+  
+  var cashInDollar = 0, cashSplit = [];
+  $.each(cid, function(i, c){
+	var drawerCash = getAmountInDollar(c);
+	cashInDollar += drawerCash["dollar"];
+	cashSplit.concat(drawerCash["cash"]);
+  });
+  console.log(cashSplit);
+  
+  if(drawerCash < change){
+    return "Insufficient Funds";
+  } else if(drawerCash == change){
+    return "Insufficient Funds";
+  } else {
+	change = getChange(change, cid);
+    return change;
+  }
+}
+
+// Example cash-in-drawer array:
+// [["PENNY", 1.01],
+// ["NICKEL", 2.05],
+// ["DIME", 3.10],
+// ["QUARTER", 4.25],
+// ["ONE", 90.00],
+// ["FIVE", 55.00],
+// ["TEN", 20.00],
+// ["TWENTY", 60.00],
+// ["ONE HUNDRED", 100.00]]
+
+checkCashRegister(19.50, 20.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]]);
+
+
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>
