@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Twitch Streaming</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+<script>
+$(function(){
+var denominations = {
+  "ONE HUNDRED": 100.00,
+  "TWENTY": 20.00,
+  "TEN": 10.00,
+  "FIVE": 5.00,
+  "ONE": 1.00,
+  "QUARTER": 0.25,
+  "DIME": 0.10,
+  "NICKEL": 0.05,
+  "PENNY": 0.01,
+};
+
+function getChange(change, cid){
+  var retChange = [];
+  $.each(denominations, function(i, d){
+	var denomUsed = false, val = 0;
+	while(cid[i] > 0 && change >= d){
+	  change -= d;
+	  // Round change to the nearest hundreth deals with precision errors
+	  change = Math.round(change * 100) / 100;
+	  
+	  cid[i] -= d;
+	  val += d;
+	  denomUsed = true;
+	}
+	
+	if(denomUsed)
+	  retChange.push([i, val]);
+  });
+  
+  if(change > 0)
+	retChange = "Insufficient Funds";
+  
+  return retChange;
+}
+
+function checkCashRegister(price, cash, cid) {
+  var change = (cash-price).toFixed(2);
+  change = parseFloat(change);
+  var cashInDollar = 0, cashDenom = [];
+  $.each(cid, function(i, d){
+	cashInDollar += d[1];
+	cashDenom[d[0]] = d[1];
+  });
+  
+  if(cashInDollar < change){
+    return "Insufficient Funds";
+  } else if(cashInDollar == change){
+    return "Closed";
+  } else {
+	console.log(cashInDollar);
+	var change_denom = getChange(change, cashDenom);
+    return change_denom;
+  }
+}
+
+// Example cash-in-drawer array:
+// [["PENNY", 1.01],
+// ["NICKEL", 2.05],
+// ["DIME", 3.10],
+// ["QUARTER", 4.25],
+// ["ONE", 90.00],
+// ["FIVE", 55.00],
+// ["TEN", 20.00],
+// ["TWENTY", 60.00],
+// ["ONE HUNDRED", 100.00]]
+
+var ret = checkCashRegister(3.26, 100.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10], ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00], ["TEN", 20.00], ["TWENTY", 60.00], ["ONE HUNDRED", 100.00]]);
+
+alert(ret);
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>
